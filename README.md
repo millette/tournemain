@@ -23,8 +23,8 @@ Au départ, `Tournemain` est une application web pour offrir un site, comme un b
 
 - On peut choisir le _path_ de la page (basé sur le titre et/ou la date automatiquement)
 - On peut attacher des images (et les reformatter)
-- On peut attacher des audios (et les reformatter)
-- (_éventuellement_) On peut attacher des audios (et les reformatter)
+- On peut attacher des audio (et les reformatter)
+- (_éventuellement_) On peut attacher des vidéo (et les reformatter)
 - On peut attacher d'autres types de documents
 - On peut faire des pages brouillons non-listées avec des _path_ temporaires et aléatoires
 - Multilingue, français et anglais pour commencer
