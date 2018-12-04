@@ -1,5 +1,6 @@
 // npm
-import Link from "next/link"
+import { Component } from "react"
+// import Link from "next/link"
 import Error from "next/error"
 
 import "medium-draft/dist/basic.css"
@@ -7,58 +8,63 @@ import "medium-draft/dist/medium-draft.css"
 
 // self
 import MyEditor from "../components/editor"
+import Nav from "../components/nav"
 
-const Index = ({ json, path }) => {
-  // FIXME: should offer to create page
-  if (json.statusCode) return <Error statusCode={json.statusCode} />
+// const Index = ({ json, path }) => {
+export default class Index extends Component {
+  constructor(props) {
+    super(props)
+    this.state = { edit: false }
+    this.edit = () => this.setState({ edit: true })
+    this.cancelEdit = () => this.setState({ edit: false })
+  }
 
-  return (
-    <section className="section">
-      <div className="container">
-        <h1 className="title">{json.title}</h1>
-        <nav className="columns">
-          <div className="column">
-            <Link href="/page" as="/">
-              <a>Home page</a>
-            </Link>
+  static async getInitialProps(o) {
+    const path = o.asPath.slice(1)
+    if (o.req) {
+      const data = require("../pages.json")
+      const json = data[path]
+      return { json, path }
+    }
+
+    return fetch(`/api/page/${path}`)
+      .then((res) => res.json())
+      .then((json) => ({ json, path }))
+  }
+
+  render() {
+    const { json, path } = this.props
+    // FIXME: should offer to create page
+    if (json.statusCode) return <Error statusCode={json.statusCode} />
+
+    return (
+      <>
+        <Nav />
+        <section className="section">
+          <div className="container">
+            <h1 className="title">
+              {json.title}{" "}
+              {this.state.edit ? null : (
+                <button className="button is-small" onClick={this.edit}>
+                  edit
+                </button>
+              )}
+            </h1>
+            <MyEditor
+              cancelEdit={this.cancelEdit}
+              edit={this.state.edit}
+              initialContent={json.content}
+              key={path}
+              editorKey={path}
+            />
           </div>
-          <div className="column">
-            <Link href="/page?page=page-2" as="/page-2">
-              <a>Second page</a>
-            </Link>
-          </div>
-          <div className="column">
-            <Link href="/page?page=page-3" as="/page-3">
-              <a>Third page</a>
-            </Link>
-          </div>
-          <div className="column">
-            <Link href="/page?page=page-5" as="/page-5">
-              <a>404...</a>
-            </Link>
-          </div>
-          <div className="column">
-            <Link href="/other">
-              <a>Other page</a>
-            </Link>
-          </div>
-          <div className="column">
-            <Link href="/about">
-              <a>About page</a>
-            </Link>
-          </div>
-          <div className="column">
-            <Link href="/contact">
-              <a>Contact page</a>
-            </Link>
-          </div>
-        </nav>
-        <MyEditor initialContent={json.content} key={path} editorKey={path} />
-      </div>
-    </section>
-  )
+        </section>
+      </>
+    )
+  }
 }
 
+/*
 Index.getInitialProps = async (o) => {
   const path = o.asPath.slice(1)
   if (o.req) {
@@ -71,5 +77,6 @@ Index.getInitialProps = async (o) => {
     .then((res) => res.json())
     .then((json) => ({ json, path }))
 }
+*/
 
-export default Index
+// export default Index

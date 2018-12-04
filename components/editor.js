@@ -1,7 +1,5 @@
 // npm
 import { Component } from "react"
-// import { convertFromHTML, Editor, EditorState, ContentState } from 'draft-js'
-// import { convertFromHTML, Editor, EditorState, ContentState } from 'medium-draft/dist/medium-draft'
 import {
   createEditorState,
   Editor,
@@ -25,8 +23,6 @@ class MyEditor extends Component {
       const html = mediumDraftExporter(
         this.state.editorState.getCurrentContent(),
       )
-      console.log("HTML:", html)
-      console.log("HTML.length", html.length)
       this.setState({ html })
     }
   }
@@ -39,23 +35,46 @@ class MyEditor extends Component {
   }
 
   render() {
+    const style = { whiteSpace: "pre-wrap" }
+
     return (
       <>
-        {this.state.editorState ? (
-          <Editor
-            editorKey={this.props.editorKey}
-            editorState={this.state.editorState}
-            onChange={this.onChange}
-          />
+        {this.props.edit && this.state.editorState ? (
+          <>
+            <Editor
+              editorKey={this.props.editorKey}
+              editorState={this.state.editorState}
+              onChange={this.onChange}
+            />
+
+            <div class="field is-grouped">
+              <p class="control">
+                <button className="button" onClick={this.showHTML}>
+                  Show updated html output
+                </button>
+              </p>
+              <p class="control">
+                <button
+                  className="button is-warning"
+                  onClick={this.props.cancelEdit}
+                >
+                  Cancel
+                </button>
+              </p>
+            </div>
+          </>
         ) : (
           <div
             className="content"
             dangerouslySetInnerHTML={{ __html: this.props.initialContent }}
           />
         )}
-        <button onClick={this.showHTML}>Show updated html output</button>
 
-        <div>{this.state.html}</div>
+        {this.state.html ? (
+          <pre style={style}>
+            <code>{this.state.html}</code>
+          </pre>
+        ) : null}
       </>
     )
   }
