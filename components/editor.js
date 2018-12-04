@@ -72,7 +72,7 @@ class MyEditor extends Component {
     {this.state.editorState ? (
         <Editor editorKey={this.props.editorKey} editorState={this.state.editorState} onChange={this.onChange} />
     ) : (
-      <div dangerouslySetInnerHTML={{ __html: this.props.initialContent }} />
+      <div className='content' dangerouslySetInnerHTML={{ __html: this.props.initialContent }} />
     )}
     <button onClick={this.showHTML}>
       Show updated html output
