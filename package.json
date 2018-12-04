@@ -24,6 +24,7 @@
   },
   "homepage": "https://github.com/millette/tournemain#readme",
   "dependencies": {
+    "@zeit/next-css": "^1.0.1",
     "draft-js": "^0.10.5",
     "fastify": "^1.13.1",
     "fastify-react": "^2.1.1",
