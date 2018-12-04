@@ -49,12 +49,15 @@ Au départ, `Tournemain` est une application web pour offrir un site, comme un b
 
 ## Exemple de *layout*
 
+```jsx
 <Layout>
   <Header />
   {children}
   <Footer />
 </Layout>
+```
 
+```jsx
 <LayoutBlogPost>
   <Layout>
     <BlockAuthorship />
@@ -63,6 +66,7 @@ Au départ, `Tournemain` est une application web pour offrir un site, comme un b
     {children}
   </Layout>
 </LayoutBlogPost>
+```
 
 ## Collections
 
