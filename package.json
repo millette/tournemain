@@ -2,13 +2,6 @@
   "name": "tournemain",
   "version": "0.0.0",
   "description": "Prenez le web à deux mains",
-  "main": "index.js",
-  "scripts": {
-    "dev": "node .",
-    "build": "next build",
-    "start": "NODE_ENV=production node .",
-    "test": "echo \"Error: no test specified\" && exit 1"
-  },
   "repository": "millette/tournemain",
   "author": {
     "name": "Robin Millette",
@@ -23,6 +16,23 @@
     "url": "https://github.com/millette/tournemain/issues"
   },
   "homepage": "https://github.com/millette/tournemain#readme",
+  "lint-staged": {
+    "*.{js,json,md}": [
+      "prettier --write",
+      "git add"
+    ]
+  },
+  "husky": {
+    "hooks": {
+      "pre-commit": "lint-staged"
+    }
+  },
+  "scripts": {
+    "dev": "node .",
+    "build": "next build",
+    "start": "NODE_ENV=production node .",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
   "dependencies": {
     "@zeit/next-css": "^1.0.1",
     "bulma": "^0.7.2",
@@ -32,5 +42,10 @@
     "medium-draft": "^0.5.9",
     "react": "^16.6.3",
     "react-dom": "^16.6.3"
+  },
+  "devDependencies": {
+    "husky": "^1.2.0",
+    "lint-staged": "^8.1.0",
+    "prettier": "^1.15.3"
   }
 }
