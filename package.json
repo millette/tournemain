@@ -4,9 +4,20 @@
   "description": "Prenez le web à deux mains",
   "main": "index.js",
   "scripts": {
+    "dev": "node .",
+    "build": "next build",
+    "start": "NODE_ENV=production node .",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "repository": "millette/tournemain",
+  "author": {
+    "name": "Robin Millette",
+    "email": "robin@millette.info",
+    "url": "http://robin.millette.info"
+  },
+  "engines": {
+    "node": ">= 10.14.1"
+  },
   "license": "AGPL-3.0",
   "bugs": {
     "url": "https://github.com/millette/tournemain/issues"
