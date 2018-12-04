@@ -2,7 +2,8 @@
 import Link from 'next/link'
 import Error from 'next/error'
 
-import 'draft-js/dist/Draft.css'
+import 'medium-draft/dist/basic.css'
+import 'medium-draft/dist/medium-draft.css'
 
 // self
 import MyEditor from '../components/editor'
