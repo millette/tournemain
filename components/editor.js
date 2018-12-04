@@ -68,12 +68,20 @@ class MyEditor extends Component {
 
             <div className="field is-grouped">
               <p className="control">
-                <button className="button is-primary" onClick={this.saveHTML}>
+                <button
+                  disabled={!this.state.dirty}
+                  className="button is-primary"
+                  onClick={this.saveHTML}
+                >
                   Save
                 </button>
               </p>
               <p className="control">
-                <button className="button" onClick={this.showHTML}>
+                <button
+                  disabled={!this.state.dirty}
+                  className="button"
+                  onClick={this.showHTML}
+                >
                   Show html
                 </button>
               </p>
