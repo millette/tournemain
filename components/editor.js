@@ -16,8 +16,16 @@ class MyEditor extends Component {
   constructor(props) {
     super(props)
 
-    this.state = { editorState: false, html: false }
-    this.onChange = (editorState) => this.setState({ html: false, editorState })
+    this.state = { editorState: false, html: false, dirty: false }
+    this.onChange = (editorState) =>
+      this.setState({ html: false, editorState, dirty: true })
+
+    this.saveHTML = () => {
+      const html = mediumDraftExporter(
+        this.state.editorState.getCurrentContent(),
+      )
+      console.log("Would save", html.length, "of", html)
+    }
 
     this.showHTML = () => {
       const html = mediumDraftExporter(
@@ -27,7 +35,18 @@ class MyEditor extends Component {
     }
   }
 
+  componentWillUnmount() {
+    // console.log('componentWillUnmount (editor)', this.state.dirty)
+    const undo2 =
+      this.state.dirty &&
+      mediumDraftExporter(this.state.editorState.getCurrentContent())
+    const undo = this.props.initialContent !== undo2 && undo2
+    // FIXME: temporarely save in localstorage
+    this.props.cancelEdit({ undo, path: this.props.editorKey })
+  }
+
   componentDidMount() {
+    // console.log('componentDidMount: editor')
     const editorState = createEditorState(
       convertToRaw(mediumDraftImporter(this.props.initialContent)),
     )
@@ -49,8 +68,13 @@ class MyEditor extends Component {
 
             <div className="field is-grouped">
               <p className="control">
+                <button className="button is-primary" onClick={this.saveHTML}>
+                  Save
+                </button>
+              </p>
+              <p className="control">
                 <button className="button" onClick={this.showHTML}>
-                  Show updated html output
+                  Show html
                 </button>
               </p>
               <p className="control">

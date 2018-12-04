@@ -12,9 +12,16 @@ import Nav from "../components/nav"
 export default class Index extends Component {
   constructor(props) {
     super(props)
-    this.state = { edit: false }
+    this.state = { undo: false, edit: false, path: false }
     this.edit = () => this.setState({ edit: true })
-    this.cancelEdit = () => this.setState({ edit: false })
+    this.cancelEdit = (ev) => {
+      let { undo, path } = ev
+      if (undo === "" || typeof undo !== "string") {
+        undo = false
+        path = false
+      }
+      this.setState({ undo, path, edit: false })
+    }
   }
 
   static async getInitialProps(o) {
@@ -29,6 +36,16 @@ export default class Index extends Component {
       .then((res) => res.json())
       .then((json) => ({ json, path }))
   }
+
+  /*
+  componentWillUnmount() {
+    console.log('componentWillUnmount (page)')
+  }
+
+  componentDidMount() {
+    console.log('componentDidMount: page')
+  }
+  */
 
   render() {
     const { json, path } = this.props
@@ -55,6 +72,17 @@ export default class Index extends Component {
               key={path}
               editorKey={path}
             />
+            {this.state.undo ? (
+              <div className="box">
+                <h2 className="title">
+                  {this.state.path} <small>Undoable</small>
+                </h2>
+                <div
+                  className="content"
+                  dangerouslySetInnerHTML={{ __html: this.state.undo }}
+                />
+              </div>
+            ) : null}
           </div>
         </section>
       </>
