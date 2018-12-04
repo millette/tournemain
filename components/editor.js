@@ -47,13 +47,13 @@ class MyEditor extends Component {
               onChange={this.onChange}
             />
 
-            <div class="field is-grouped">
-              <p class="control">
+            <div className="field is-grouped">
+              <p className="control">
                 <button className="button" onClick={this.showHTML}>
                   Show updated html output
                 </button>
               </p>
-              <p class="control">
+              <p className="control">
                 <button
                   className="button is-warning"
                   onClick={this.props.cancelEdit}
