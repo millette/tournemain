@@ -1,0 +1,14 @@
+{
+  "": {
+    "title": "Home",
+    "content": "Pif"
+  },
+  "page-2": {
+    "title": "Second page",
+    "content": "Paf"
+  },
+  "page-3": {
+    "title": "Third page",
+    "content": "Pouf"
+  }
+}
