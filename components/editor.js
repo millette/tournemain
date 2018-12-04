@@ -4,16 +4,11 @@ import { Editor, EditorState, ContentState } from 'draft-js'
 class MyEditor extends Component {
   constructor(props) {
     super(props)
-    // console.log('CHILDREN:', props.children)
     this.state = { editorState: false }
-    this.onChange = (editorState) => {
-      console.log('change editorState:', editorState)
-      this.setState({ editorState })
-    }
+    this.onChange = (editorState) => this.setState({ editorState })
   }
 
   componentDidMount() {
-    // this.setState({ editorState: EditorState.createEmpty() })
     this.setState({
       editorState: EditorState.createWithContent(
         ContentState.createFromText(this.props.initialContent)
@@ -23,8 +18,10 @@ class MyEditor extends Component {
 
   render() {
     return this.state.editorState ? (
-        <Editor editorState={this.state.editorState} onChange={this.onChange} />
-    ) : null
+        <Editor editorKey={this.props.editorKey} editorState={this.state.editorState} onChange={this.onChange} />
+    ) : (
+      <div dangerouslySetInnerHTML={{ __html: this.props.initialContent }} />
+    )
   }
 }
 

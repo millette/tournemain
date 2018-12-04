@@ -2,6 +2,8 @@
 import Link from 'next/link'
 import Error from 'next/error'
 
+import 'draft-js/dist/Draft.css'
+
 // self
 import MyEditor from '../components/editor'
 
@@ -23,7 +25,7 @@ const Index = ({ json, path }) => {
     </ul>
 
     <h1>{json.title}</h1>
-    <MyEditor initialContent={json.content} key={path} />
+    <MyEditor initialContent={json.content} key={path} editorKey={path} />
     <p>The end.</p>
   </div>
   )
