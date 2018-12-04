@@ -2,7 +2,10 @@
 import Link from 'next/link'
 import Error from 'next/error'
 
-const Index = ({ json }) => {
+// self
+import MyEditor from '../components/editor'
+
+const Index = ({ json, path }) => {
   // FIXME: should offer to create page
   if (json.statusCode) return <Error statusCode={json.statusCode} />
 
@@ -20,21 +23,23 @@ const Index = ({ json }) => {
     </ul>
 
     <h1>{json.title}</h1>
-    <p>{json.content}</p>
+    <MyEditor initialContent={json.content} key={path} />
+    <p>The end.</p>
   </div>
   )
 }
 
 Index.getInitialProps = async (o) => {
+  const path = o.asPath.slice(1)
   if (o.req) {
     const data = require('../pages.json')
-    const json = data[o.asPath.slice(1)]
-    return { json }
+    const json = data[path]
+    return { json, path }
   }
 
-  return fetch(`/api/page${o.asPath}`)
+  return fetch(`/api/page/${path}`)
     .then((res) => res.json())
-    .then((json) => ({ json }))
+    .then((json) => ({ json, path }))
 }
 
 export default Index
