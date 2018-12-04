@@ -1,6 +1,6 @@
-import App, { Container } from 'next/app'
+import App, { Container } from "next/app"
 
-import 'bulma/css/bulma.min.css'
+import "bulma/css/bulma.min.css"
 
 export default class MyApp extends App {
   static async getInitialProps({ Component, router, ctx }) {
@@ -13,7 +13,7 @@ export default class MyApp extends App {
     return { pageProps }
   }
 
-  render () {
+  render() {
     const { Component, pageProps } = this.props
 
     return (
