@@ -1,6 +1,7 @@
 // npm
 import { Component } from 'react'
-import { Editor, EditorState, ContentState } from 'draft-js'
+import { convertFromHTML, Editor, EditorState, ContentState } from 'draft-js'
+// TODO: evaluate https://github.com/HubSpot/draft-convert instead of draft-js-export-html
 import { stateToHTML } from 'draft-js-export-html'
 
 class MyEditor extends Component {
@@ -18,10 +19,16 @@ class MyEditor extends Component {
   }
 
   componentDidMount() {
+    // const it = ContentState.createFromText(this.props.initialContent)
+
+    const blocksFromHTML = convertFromHTML(this.props.initialContent)
+    const it = ContentState.createFromBlockArray(
+      blocksFromHTML.contentBlocks,
+      blocksFromHTML.entityMap
+    )
+
     this.setState({
-      editorState: EditorState.createWithContent(
-        ContentState.createFromText(this.props.initialContent)
-      )
+      editorState: EditorState.createWithContent(it)
     })
   }
 
