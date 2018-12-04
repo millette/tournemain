@@ -5,7 +5,7 @@
   },
   "page-2": {
     "title": "Second page",
-    "content": "Paf"
+    "content": "<p class=\"md-block-unstyled\">Pif, but <em class=\"md-inline-italic\">some</em> wanted more.</p><p class=\"md-block-unstyled\">It seems, we say, let&#x27;s go!</p>"
   },
   "page-3": {
     "title": "Third page",
