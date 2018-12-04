@@ -1,0 +1,21 @@
+{
+  "name": "tournemain",
+  "version": "0.0.0",
+  "description": "Prenez le web à deux mains",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": "millette/tournemain",
+  "license": "AGPL-3.0",
+  "bugs": {
+    "url": "https://github.com/millette/tournemain/issues"
+  },
+  "homepage": "https://github.com/millette/tournemain#readme",
+  "dependencies": {
+    "fastify": "^1.13.1",
+    "fastify-react": "^2.1.1",
+    "react": "^16.6.3",
+    "react-dom": "^16.6.3"
+  }
+}
