@@ -1,6 +1,7 @@
 // npm
 import { Component } from "react"
 import Error from "next/error"
+import fetch from "isomorphic-unfetch"
 
 import "medium-draft/dist/basic.css"
 import "medium-draft/dist/medium-draft.css"
@@ -8,12 +9,30 @@ import "medium-draft/dist/medium-draft.css"
 // self
 import MyEditor from "../components/editor"
 import Nav from "../components/nav"
+import { baseUrl } from "../utils"
 
 export default class Index extends Component {
   constructor(props) {
     super(props)
     this.state = { undo: false, edit: false, path: false }
     this.edit = () => this.setState({ edit: true })
+    this.saveHTML = ({ html, path }) => {
+      fetch(`/api/page/${path}`, {
+        method: "PUT",
+        body: JSON.stringify({ html }),
+        headers: {
+          "Content-Type": "application/json",
+        },
+      })
+        .then((res) => res.json())
+        .then((response) => {
+          console.log("Success:", response)
+          this.props.json.content = html
+          this.setState({ edit: false })
+        })
+        .catch(console.error)
+    }
+
     this.cancelEdit = (ev) => {
       let { undo, path } = ev
       if (undo === "" || typeof undo !== "string") {
@@ -26,13 +45,17 @@ export default class Index extends Component {
 
   static async getInitialProps(o) {
     const path = o.asPath.slice(1)
+    /*
     if (o.req) {
       const data = require("../pages.json")
       const json = data[path]
       return { json, path }
     }
+    */
 
-    return fetch(`/api/page/${path}`)
+    // return fetch(`/api/page/${path}`)
+    // return fetch(`http://localhost:3000/api/page/${path}`)
+    return fetch(baseUrl(o.req, `api/page/${path}`))
       .then((res) => res.json())
       .then((json) => ({ json, path }))
   }
@@ -66,6 +89,7 @@ export default class Index extends Component {
               )}
             </h1>
             <MyEditor
+              saveHTML={this.saveHTML}
               cancelEdit={this.cancelEdit}
               edit={this.state.edit}
               initialContent={json.content}
