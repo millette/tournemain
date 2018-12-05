@@ -14,6 +14,18 @@ fastify.get("/api/page/:page", async (req, reply) => {
   return pages[req.params.page]
 })
 
+fastify.put("/api/page/:page", async (req, reply) => {
+  if (!pages[req.params.page]) {
+    reply.code(404)
+    throw new Error("API#put: Niet")
+  }
+  console.log(Object.keys(req), req.body, typeof req.body)
+
+  pages[req.params.page].content = req.body.html
+  // return pages[req.params.page]
+  return { ok: true, page: req.params.page }
+})
+
 fastify.get("/favicon.ico", async (req, reply) => {
   reply.code(404)
   throw new Error("Niet")
