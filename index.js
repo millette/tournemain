@@ -1,10 +1,24 @@
-// use strict
+"use strict"
+
+// npm
 const fastify = require("fastify")()
+
+// core
+const { writeFileSync } = require("fs")
 
 const dev = process.env.NODE_ENV !== "production"
 
 // pretend we're a db
 const pages = require("./pages.json")
+
+let dirty = false
+setInterval(() => {
+  if (!dirty) return
+  const json = JSON.stringify(pages)
+  console.log("WRITING", json.length, Object.keys(pages))
+  writeFileSync("pages.json", json)
+  dirty = false
+}, 1 * 60 * 1000)
 
 fastify.get("/api/page/:page", async (req, reply) => {
   if (!pages[req.params.page]) {
@@ -23,6 +37,7 @@ fastify.put("/api/page/:page", async (req, reply) => {
 
   pages[req.params.page].content = req.body.html
   // return pages[req.params.page]
+  dirty = true
   return { ok: true, page: req.params.page }
 })
 
