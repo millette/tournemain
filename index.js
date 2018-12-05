@@ -15,7 +15,6 @@ let dirty = false
 setInterval(() => {
   if (!dirty) return
   const json = JSON.stringify(pages)
-  console.log("WRITING", json.length, Object.keys(pages))
   writeFileSync("pages.json", json)
   dirty = false
 }, 1 * 60 * 1000)
@@ -33,10 +32,7 @@ fastify.put("/api/page/:page", async (req, reply) => {
     reply.code(404)
     throw new Error("API#put: Niet")
   }
-  console.log(Object.keys(req), req.body, typeof req.body)
-
   pages[req.params.page].content = req.body.html
-  // return pages[req.params.page]
   dirty = true
   return { ok: true, page: req.params.page }
 })

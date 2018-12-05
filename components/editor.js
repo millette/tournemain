@@ -28,7 +28,6 @@ class MyEditor extends Component {
         console.log("Content hasn't changed.")
         return
       }
-      console.log("Would save", html.length, "of", html)
       this.props.saveHTML({ html, path: this.props.editorKey })
     }
 
@@ -41,7 +40,6 @@ class MyEditor extends Component {
   }
 
   componentWillUnmount() {
-    // console.log('componentWillUnmount (editor)', this.state.dirty)
     const undo2 =
       this.state.dirty &&
       mediumDraftExporter(this.state.editorState.getCurrentContent())
@@ -51,7 +49,6 @@ class MyEditor extends Component {
   }
 
   componentDidMount() {
-    // console.log('componentDidMount: editor')
     const editorState = createEditorState(
       convertToRaw(mediumDraftImporter(this.props.initialContent)),
     )

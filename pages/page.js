@@ -26,7 +26,6 @@ export default class Index extends Component {
       })
         .then((res) => res.json())
         .then((response) => {
-          console.log("Success:", response)
           this.props.json.content = html
           this.setState({ edit: false })
         })
@@ -49,16 +48,6 @@ export default class Index extends Component {
       .then((res) => res.json())
       .then((json) => ({ json, path }))
   }
-
-  /*
-  componentWillUnmount() {
-    console.log('componentWillUnmount (page)')
-  }
-
-  componentDidMount() {
-    console.log('componentDidMount: page')
-  }
-  */
 
   render() {
     const { json, path } = this.props
