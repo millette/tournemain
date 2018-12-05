@@ -35,10 +35,12 @@
   },
   "dependencies": {
     "@zeit/next-css": "^1.0.1",
+    "abstract-cache": "^1.0.1",
     "bulma": "^0.7.2",
     "draft-convert": "^2.1.4",
     "draft-js": "^0.10.5",
     "fastify": "^1.13.1",
+    "fastify-caching": "^3.0.0",
     "fastify-react": "^2.1.1",
     "fastify-response-time": "^1.0.4",
     "isomorphic-unfetch": "^3.0.0",
