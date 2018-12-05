@@ -2,6 +2,8 @@
 
 // npm
 const fastify = require("fastify")()
+const abstractCache = require("abstract-cache")
+const fastifyCaching = require("fastify-caching")
 
 // core
 const { writeFileSync } = require("fs")
@@ -19,13 +21,56 @@ setInterval(() => {
   dirty = false
 }, 1 * 60 * 1000)
 
+const TTL = dev ? 30 : 86400000 * 30
+const cacheOptions = { driver: { options: {} } }
+if (dev) cacheOptions.driver.options.maxItems = 10
+const cache = abstractCache(cacheOptions)
 fastify.register(require("fastify-response-time"))
+fastify.register(fastifyCaching, {
+  expiresIn: TTL,
+  privacy: fastifyCaching.privacy.PUBLIC,
+  cache,
+})
+
+const getPromise = (key) =>
+  new Promise((resolve, reject) =>
+    fastify.cache.get(key, (err, cached) =>
+      err ? reject(err) : resolve(cached),
+    ),
+  )
+
+const setPromise = (key, html) =>
+  new Promise((resolve, reject) => {
+    const date = new Date().toUTCString()
+    const etag = `"${key.replace(/[^a-z0-9]/g, "")}${html.length}"`
+    const obj = { html, date, etag }
+    fastify.cache.set(key, obj, TTL, (err) =>
+      err ? reject(err) : resolve(obj),
+    )
+  })
+
+const cacheSend = async (app, req, reply, opts, path) => {
+  const cached = await getPromise(req.url)
+  if (cached && cached.item && cached.item.html) {
+    reply.etag(cached.item.etag).type("text/html")
+    return cached.item.html
+  }
+
+  const html = await app.renderToHTML(req, reply.res, path || req.url, opts)
+  const { etag, date } = await setPromise(req.url, html)
+  reply
+    .etag(etag)
+    .type("text/html")
+    .header("x-backend", process.env.HOSTNAME)
+  return html
+}
 
 fastify.get("/api/page/:page", async (req, reply) => {
   if (!pages[req.params.page]) {
     reply.code(404)
     throw new Error("API: Niet")
   }
+  reply.etag()
   return pages[req.params.page]
 })
 
@@ -57,14 +102,7 @@ fastify.register(require("fastify-react"), { dev }).after(() => {
     "/:page",
     async (app, { req, query, params: { page } }, reply) => {
       if (unknownPage(page)) return app.render404(req, reply.res)
-      const html = await app.renderToHTML(
-        req,
-        reply.res,
-        "/page",
-        page ? { ...query, page } : {},
-      )
-      reply.type("text/html")
-      return html
+      return cacheSend(app, req, reply, { ...query, page }, "/page")
     },
   )
 })
