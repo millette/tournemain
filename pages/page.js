@@ -44,7 +44,8 @@ export default class Index extends Component {
   }
 
   static async getInitialProps(o) {
-    return fetch(baseUrl(o.req, `api/page/${o.asPath.slice(1)}`))
+    const path = o.asPath.slice(1)
+    return fetch(baseUrl(o.req, `api/page/${path}`))
       .then((res) => res.json())
       .then((json) => ({ json, path }))
   }
