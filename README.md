@@ -85,3 +85,12 @@ Les collections regroupent des pages selon certains paramètres configurables.
 - Visiter /fr/blogue
 - Cliquer sur «Nouveau billet»
 - ...
+
+## Installation
+
+```sh
+cp pages.json.sample pages.json
+npm install
+npm run build
+npm run start
+```
