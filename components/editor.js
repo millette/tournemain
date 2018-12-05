@@ -24,7 +24,12 @@ class MyEditor extends Component {
       const html = mediumDraftExporter(
         this.state.editorState.getCurrentContent(),
       )
+      if (html === this.props.initialContent) {
+        console.log("Content hasn't changed.")
+        return
+      }
       console.log("Would save", html.length, "of", html)
+      this.props.saveHTML({ html, path: this.props.editorKey })
     }
 
     this.showHTML = () => {
