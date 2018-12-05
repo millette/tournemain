@@ -44,18 +44,7 @@ export default class Index extends Component {
   }
 
   static async getInitialProps(o) {
-    const path = o.asPath.slice(1)
-    /*
-    if (o.req) {
-      const data = require("../pages.json")
-      const json = data[path]
-      return { json, path }
-    }
-    */
-
-    // return fetch(`/api/page/${path}`)
-    // return fetch(`http://localhost:3000/api/page/${path}`)
-    return fetch(baseUrl(o.req, `api/page/${path}`))
+    return fetch(baseUrl(o.req, `api/page/${o.asPath.slice(1)}`))
       .then((res) => res.json())
       .then((json) => ({ json, path }))
   }
