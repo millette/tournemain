@@ -7,7 +7,7 @@ Au départ, `Tournemain` est une application web pour offrir un site, comme un b
 ## Comme un wiki
 
 - Chaque page a un historique et permet de faire des _diff_ et revenir en arrière
-- L'édition se fait _inline_ en `markdown`
+- L'édition se fait _inline_
 - N'importe qui peut éditer le contenu (après des mesures anti-spam)
 - Il suffit de visiter un URL (suivre un lien) pour créer une nouvelle page
 - Chaque page donne la liste des autres pages qui lient vers elle (_backlinks_) et peut ainsi servir de _tags_
