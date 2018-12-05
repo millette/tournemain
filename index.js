@@ -1,7 +1,7 @@
 "use strict"
 
 // npm
-const fastify = require("fastify")()
+const fastify = require("fastify")({ logging: true })
 const abstractCache = require("abstract-cache")
 const fastifyCaching = require("fastify-caching")
 
@@ -58,10 +58,8 @@ const cacheSend = async (app, req, reply, opts, path) => {
 
   const html = await app.renderToHTML(req, reply.res, path || req.url, opts)
   const { etag, date } = await setPromise(req.url, html)
-  reply
-    .etag(etag)
-    .type("text/html")
-    .header("x-backend", process.env.HOSTNAME)
+  reply.etag(etag).type("text/html")
+  if (process.env.HOSTNAME) reply.header("x-backend", process.env.HOSTNAME)
   return html
 }
 
@@ -79,9 +77,12 @@ fastify.put("/api/page/:page", async (req, reply) => {
     reply.code(404)
     throw new Error("API#put: Niet")
   }
-  pages[req.params.page].content = req.body.html
+  const page = req.params.page
+  pages[page].content = req.body.html
   dirty = true
-  return { ok: true, page: req.params.page }
+  fastify.cache.delete(`/${page}`)
+  // TODO: delete api etag
+  return { ok: true, page }
 })
 
 fastify.get("/favicon.ico", async (req, reply) => {
