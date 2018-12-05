@@ -40,6 +40,7 @@
     "draft-js": "^0.10.5",
     "fastify": "^1.13.1",
     "fastify-react": "^2.1.1",
+    "fastify-response-time": "^1.0.4",
     "isomorphic-unfetch": "^3.0.0",
     "medium-draft": "^0.5.9",
     "react": "^16.6.3",

@@ -19,6 +19,8 @@ setInterval(() => {
   dirty = false
 }, 1 * 60 * 1000)
 
+fastify.register(require("fastify-response-time"))
+
 fastify.get("/api/page/:page", async (req, reply) => {
   if (!pages[req.params.page]) {
     reply.code(404)
