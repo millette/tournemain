@@ -16,26 +16,19 @@ class MyEditor extends Component {
   constructor(props) {
     super(props)
 
-    this.state = { editorState: false, html: false, dirty: false }
-    this.onChange = (editorState) =>
-      this.setState({ html: false, editorState, dirty: true })
+    this.state = { editorState: false, dirty: false }
+    this.onChange = (editorState) => this.setState({ editorState, dirty: true })
 
     this.saveHTML = () => {
       const html = mediumDraftExporter(
         this.state.editorState.getCurrentContent(),
       )
       if (html === this.props.initialContent) {
+        // FIXME: tell user
         console.log("Content hasn't changed.")
         return
       }
       this.props.saveHTML({ html, path: this.props.editorKey })
-    }
-
-    this.showHTML = () => {
-      const html = mediumDraftExporter(
-        this.state.editorState.getCurrentContent(),
-      )
-      this.setState({ html })
     }
   }
 
@@ -80,15 +73,6 @@ class MyEditor extends Component {
               </p>
               <p className="control">
                 <button
-                  disabled={!this.state.dirty}
-                  className="button"
-                  onClick={this.showHTML}
-                >
-                  Show html
-                </button>
-              </p>
-              <p className="control">
-                <button
                   className="button is-warning"
                   onClick={this.props.cancelEdit}
                 >
@@ -103,12 +87,6 @@ class MyEditor extends Component {
             dangerouslySetInnerHTML={{ __html: this.props.initialContent }}
           />
         )}
-
-        {this.state.html ? (
-          <pre style={style}>
-            <code>{this.state.html}</code>
-          </pre>
-        ) : null}
       </>
     )
   }
