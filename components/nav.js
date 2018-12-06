@@ -4,7 +4,7 @@ import Link from "next/link"
 export default () => (
   <section className="section">
     <div className="container">
-      <nav className="columns">
+      <nav className="columns is-mobile">
         <div className="column">
           <Link href="/page" as="/">
             <a>Home page</a>
