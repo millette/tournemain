@@ -7,8 +7,7 @@ import "medium-draft/dist/basic.css"
 import "medium-draft/dist/medium-draft.css"
 
 // self
-import MyEditor from "../components/editor"
-import Nav from "../components/nav"
+import { MyEditor, Nav } from "../components"
 import { baseUrl } from "../utils"
 
 export default class Index extends Component {
