@@ -80,7 +80,10 @@ fastify.put("/api/page/:page", async (req, reply) => {
   const page = req.params.page
   pages[page].content = req.body.html
   dirty = true
-  fastify.cache.delete(`/${page}`)
+  fastify.cache.delete(
+    `/${page}`,
+    (err) => err && console.error("DELETE-err:", err),
+  )
   // TODO: delete api etag
   return { ok: true, page }
 })
