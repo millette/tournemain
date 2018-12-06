@@ -28,6 +28,7 @@ export default class Index extends Component {
         .then((res) => res.json())
         .then((response) => {
           this.props.json.content = html
+          this.props.json.title = "Titre à venir"
           delete this.props.json.statusCode
           this.setState({ edit: false })
         })
