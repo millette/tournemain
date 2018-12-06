@@ -52,13 +52,19 @@ const setPromise = (key, html) =>
 const cacheSend = async (app, req, reply, opts, path) => {
   const cached = await getPromise(req.url)
   if (cached && cached.item && cached.item.html) {
-    reply.etag(cached.item.etag).type("text/html")
+    reply
+      .etag(cached.item.etag)
+      .header("x-ss-cache", "hit")
+      .type("text/html")
     return cached.item.html
   }
 
   const html = await app.renderToHTML(req, reply.res, path || req.url, opts)
   const { etag, date } = await setPromise(req.url, html)
-  reply.etag(etag).type("text/html")
+  reply
+    .etag(etag)
+    .header("x-ss-cache", "miss")
+    .type("text/html")
   if (process.env.HOSTNAME) reply.header("x-backend", process.env.HOSTNAME)
   return html
 }
@@ -80,11 +86,22 @@ fastify.put("/api/page/:page", async (req, reply) => {
   const page = req.params.page
   pages[page].content = req.body.html
   dirty = true
-  fastify.cache.delete(
-    `/${page}`,
-    (err) => err && console.error("DELETE-err:", err),
-  )
   // TODO: delete api etag
+  const cached = await getPromise(`/${page}`)
+
+  if (cached && cached.item) {
+    if (cached.item.etag)
+      fastify.cache.delete(
+        { id: cached.item.etag, segment: "fastify-caching" },
+        (err) => err && console.error("DELETE-err#2:", err),
+      )
+
+    fastify.cache.delete(
+      `/${page}`,
+      (err) => err && console.error("DELETE-err#1:", err),
+    )
+  }
+
   return { ok: true, page }
 })
 
@@ -93,6 +110,7 @@ fastify.get("/favicon.ico", async (req, reply) => {
   throw new Error("Niet")
 })
 
+// TODO: add server-side cache
 const addCoreRoutes = (reserverd) =>
   reserverd.forEach((p) => fastify.next(`/${p}`))
 
