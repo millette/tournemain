@@ -15,7 +15,24 @@ export default class Index extends Component {
   constructor(props) {
     super(props)
     this.state = { undo: false, edit: false, path: false }
-    this.edit = () => this.setState({ edit: true })
+    this.edit = () => {
+      this.setState({ edit: true })
+      // FIXME: load most recent from API
+      /*
+      console.log('this.state.path:', this.props.path)
+      // if (this.props.path)
+      console.log('FETCH', `/api/page/${this.props.path}`)
+      fetch(`/api/page/${this.props.path}`)
+        .then((res) => res.json())
+        .then((json) => {
+          console.log('JSON', json)
+          if (!json.content) return console.error('weird')
+          // this.props.json.content = json.content
+          this.props.json = json
+          this.setState({ edit: true })
+        })
+      */
+    }
     this.saveHTML = ({ html, path }) => {
       fetch(`/api/page/${path}`, {
         method: "PUT",
