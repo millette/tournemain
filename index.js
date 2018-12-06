@@ -27,7 +27,7 @@ if (dev) cacheOptions.driver.options.maxItems = 10
 const cache = abstractCache(cacheOptions)
 fastify.register(require("fastify-response-time"))
 fastify.register(fastifyCaching, {
-  expiresIn: TTL,
+  // expiresIn: TTL,
   privacy: fastifyCaching.privacy.PUBLIC,
   cache,
 })
@@ -74,7 +74,8 @@ fastify.get("/api/page/:page", async (req, reply) => {
     reply.code(404)
     throw new Error("API: Niet")
   }
-  reply.etag()
+
+  reply.header("Vary", "Accept-Encoding").etag()
   return pages[req.params.page]
 })
 
