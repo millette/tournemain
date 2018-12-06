@@ -80,11 +80,14 @@ fastify.get("/api/page/:page", async (req, reply) => {
 })
 
 fastify.put("/api/page/:page", async (req, reply) => {
+  /*
   if (!pages[req.params.page]) {
     reply.code(404)
     throw new Error("API#put: Niet")
   }
+  */
   const page = req.params.page
+  if (!pages[page]) pages[page] = { title: "Titre à venir" }
   pages[page].content = req.body.html
   dirty = true
   // TODO: delete api etag
