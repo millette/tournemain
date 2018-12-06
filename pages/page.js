@@ -28,6 +28,7 @@ export default class Index extends Component {
         .then((res) => res.json())
         .then((response) => {
           this.props.json.content = html
+          delete this.props.json.statusCode
           this.setState({ edit: false })
         })
         .catch(console.error)
@@ -52,7 +53,45 @@ export default class Index extends Component {
 
   render() {
     const { json, path } = this.props
-    // FIXME: should offer to create page
+
+    if (json.statusCode === 404)
+      return (
+        <>
+          <Nav />
+          <section className="section">
+            <div className="container">
+              <h1 className="title">
+                Titre à venir{" "}
+                {this.state.edit ? null : (
+                  <button className="button is-small" onClick={this.edit}>
+                    edit
+                  </button>
+                )}
+              </h1>
+              <MyEditor
+                saveHTML={this.saveHTML}
+                cancelEdit={this.cancelEdit}
+                edit={true}
+                initialContent={""}
+                key={path}
+                editorKey={path}
+              />
+              {this.state.undo ? (
+                <div className="box">
+                  <h2 className="title">
+                    {this.state.path} <small>Undoable</small>
+                  </h2>
+                  <div
+                    className="content"
+                    dangerouslySetInnerHTML={{ __html: this.state.undo }}
+                  />
+                </div>
+              ) : null}
+            </div>
+          </section>
+        </>
+      )
+
     if (json.statusCode) return <Error statusCode={json.statusCode} />
 
     return (
