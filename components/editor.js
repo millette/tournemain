@@ -3,27 +3,28 @@ import { Component } from "react"
 import {
   createEditorState,
   Editor,
-  // Link,
   findLinkEntities,
 } from "medium-draft/dist/medium-draft"
-// import mediumDraftExporter, { setRenderOptions, styleToHTML, blockToHTML } from "medium-draft/dist/medium-draft-exporter"
+
 import {
   setRenderOptions,
   styleToHTML,
   blockToHTML,
 } from "medium-draft/dist/medium-draft-exporter"
-// import mediumDraftImporter, { setImportOptions, htmlToStyle, htmlToBlock } from "medium-draft/dist/medium-draft-importer"
+
 import {
   setImportOptions,
   htmlToStyle,
   htmlToBlock,
 } from "medium-draft/dist/medium-draft-importer"
+
 import {
   CompositeDecorator,
   RichUtils,
   EditorState,
   convertToRaw,
 } from "draft-js"
+
 import Router from "next/router"
 
 import "medium-draft/dist/medium-draft.css"
@@ -31,13 +32,11 @@ import "medium-draft/dist/medium-draft.css"
 const htmlToEntity = (nodeName, node, createEntity) => {
   if (nodeName === "a") {
     return createEntity("LINK", "MUTABLE", { url: node.pathname })
-    // return createEntity(EntityType.LINK, 'MUTABLE', { url: node.href });
   }
   return undefined
 }
 
 const entityToHTML = (entity, originalText) => {
-  // if (entity.type === Entity.LINK) {
   if (entity.type === "LINK") {
     return (
       <a className="md-inline-link" href={entity.data.url} data-type="page">
@@ -74,14 +73,7 @@ const Link = (props) => {
 }
 
 class MyMed extends Editor {
-  constructor(props) {
-    super(props)
-
-    // console.log('LINK:', Link)
-  }
-
   setLink(url) {
-    console.log("setLink!!")
     let { editorState } = this.props
     const selection = editorState.getSelection()
     const content = editorState.getCurrentContent()
@@ -94,8 +86,7 @@ class MyMed extends Editor {
       newUrl = `/${newUrl}`
     }
 
-    if (newUrl !== "") {
-      // const contentWithEntity = content.createEntity(E.LINK, 'MUTABLE', { url: newUrl });
+    if (newUrl) {
       const contentWithEntity = content.createEntity("LINK", "MUTABLE", {
         url: newUrl,
       })
@@ -116,8 +107,6 @@ class MyMed extends Editor {
 class MyEditor extends Component {
   constructor(props) {
     super(props)
-
-    // console.log('LINK:', Link)
 
     this.state = { editorState: false, dirty: false }
     this.onChange = (editorState) => this.setState({ editorState, dirty: true })
@@ -159,9 +148,6 @@ class MyEditor extends Component {
   }
 
   componentDidMount() {
-    // exports.Link = _link2.default;
-    // exports.findLinkEntities = _link.findLinkEntities;
-
     const defaultDecorators = new CompositeDecorator([
       {
         strategy: findLinkEntities,
