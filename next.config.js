@@ -1,14 +1,32 @@
 // npm
 const withCSS = require("@zeit/next-css")
 const withPurgeCss = require("next-purgecss")
-const { PHASE_DEVELOPMENT_SERVER } = require("next/constants")
+// const withBundleAnalyzer = require("@zeit/next-bundle-analyzer")
+const { PHASE_PRODUCTION_SERVER } = require("next/constants")
 
 const whitelistPatterns = () => [/^md-/]
 
 module.exports = (phase) => {
-  console.log("PHASE:", phase)
-  if (phase === PHASE_DEVELOPMENT_SERVER) {
-    return withCSS()
-  }
-  return withCSS(withPurgeCss({ purgeCss: { whitelistPatterns } }))
+  return phase === PHASE_PRODUCTION_SERVER
+    ? withCSS(withPurgeCss({ purgeCss: { whitelistPatterns } }))
+    : withCSS()
+  /*
+  const nextConfig = {
+      analyzeServer: ["server", "both"].includes(process.env.BUNDLE_ANALYZE),
+      analyzeBrowser: ["browser", "both"].includes(process.env.BUNDLE_ANALYZE),
+      bundleAnalyzerConfig: {
+        server: {
+          analyzerMode: 'static',
+          reportFilename: '../bundles/server.html'
+        },
+        browser: {
+          analyzerMode: 'static',
+          reportFilename: '../bundles/client.html'
+        }
+      },
+      webpack: (config) => config
+
+    }
+    return withBundleAnalyzer(nextConfig)
+  */
 }
