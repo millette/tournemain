@@ -33,16 +33,25 @@ const htmlToEntity = (nodeName, node, createEntity) => {
   if (nodeName === "a") {
     return createEntity("LINK", "MUTABLE", { url: node.pathname })
   }
-  return undefined
+  // return undefined
 }
+
+const PageLink = ({ href, children }) => (
+  <a className="md-inline-link" href={href} data-type="page">
+    {children}
+  </a>
+)
 
 const entityToHTML = (entity, originalText) => {
   if (entity.type === "LINK") {
+    return <PageLink href={entity.data.url}>{originalText}</PageLink>
+    /*
     return (
       <a className="md-inline-link" href={entity.data.url} data-type="page">
         {originalText}
       </a>
     )
+    */
   }
   return originalText
 }
@@ -65,11 +74,14 @@ const mediumDraftImporter = setImportOptions(elOptsImport)
 const Link = (props) => {
   const { contentState, entityKey } = props
   const { url } = contentState.getEntity(entityKey).getData()
+  return <PageLink href={url}>{props.children}</PageLink>
+  /*
   return (
     <a className="md-link" data-type="page" href={url}>
       {props.children}
     </a>
   )
+  */
 }
 
 class MyMed extends Editor {
