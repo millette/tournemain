@@ -1,2 +1,9 @@
+// npm
 const withCSS = require("@zeit/next-css")
-module.exports = withCSS()
+const withPurgeCss = require("next-purgecss")
+
+module.exports = withCSS(
+  withPurgeCss({
+    purgeCss: { whitelistPatterns: () => [/^md-/] },
+  }),
+)
