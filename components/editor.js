@@ -3,19 +3,121 @@ import { Component } from "react"
 import {
   createEditorState,
   Editor,
-  EditorState,
-  ContentState,
+  // Link,
+  findLinkEntities,
 } from "medium-draft/dist/medium-draft"
-import mediumDraftExporter from "medium-draft/dist/medium-draft-exporter"
-import mediumDraftImporter from "medium-draft/dist/medium-draft-importer"
-import { convertToRaw } from "draft-js"
+// import mediumDraftExporter, { setRenderOptions, styleToHTML, blockToHTML } from "medium-draft/dist/medium-draft-exporter"
+import {
+  setRenderOptions,
+  styleToHTML,
+  blockToHTML,
+} from "medium-draft/dist/medium-draft-exporter"
+// import mediumDraftImporter, { setImportOptions, htmlToStyle, htmlToBlock } from "medium-draft/dist/medium-draft-importer"
+import {
+  setImportOptions,
+  htmlToStyle,
+  htmlToBlock,
+} from "medium-draft/dist/medium-draft-importer"
+import {
+  CompositeDecorator,
+  RichUtils,
+  EditorState,
+  convertToRaw,
+} from "draft-js"
 import Router from "next/router"
 
 import "medium-draft/dist/medium-draft.css"
 
+const htmlToEntity = (nodeName, node, createEntity) => {
+  if (nodeName === "a") {
+    return createEntity("LINK", "MUTABLE", { url: node.pathname })
+    // return createEntity(EntityType.LINK, 'MUTABLE', { url: node.href });
+  }
+  return undefined
+}
+
+const entityToHTML = (entity, originalText) => {
+  // if (entity.type === Entity.LINK) {
+  if (entity.type === "LINK") {
+    return (
+      <a className="md-inline-link" href={entity.data.url} data-type="page">
+        {originalText}
+      </a>
+    )
+  }
+  return originalText
+}
+
+const elOptsExport = {
+  styleToHTML,
+  blockToHTML,
+  entityToHTML,
+}
+
+const elOptsImport = {
+  htmlToStyle,
+  htmlToEntity,
+  htmlToBlock,
+}
+
+const mediumDraftExporter = setRenderOptions(elOptsExport)
+const mediumDraftImporter = setImportOptions(elOptsImport)
+
+const Link = (props) => {
+  const { contentState, entityKey } = props
+  const { url } = contentState.getEntity(entityKey).getData()
+  return (
+    <a className="md-link" data-type="page" href={url}>
+      {props.children}
+    </a>
+  )
+}
+
+class MyMed extends Editor {
+  constructor(props) {
+    super(props)
+
+    // console.log('LINK:', Link)
+  }
+
+  setLink(url) {
+    console.log("setLink!!")
+    let { editorState } = this.props
+    const selection = editorState.getSelection()
+    const content = editorState.getCurrentContent()
+    let entityKey = null
+    let newUrl = url
+
+    if (this.props.processURL) {
+      newUrl = this.props.processURL(url)
+    } else if (url.indexOf("/")) {
+      newUrl = `/${newUrl}`
+    }
+
+    if (newUrl !== "") {
+      // const contentWithEntity = content.createEntity(E.LINK, 'MUTABLE', { url: newUrl });
+      const contentWithEntity = content.createEntity("LINK", "MUTABLE", {
+        url: newUrl,
+      })
+      editorState = EditorState.push(
+        editorState,
+        contentWithEntity,
+        "create-entity",
+      )
+      entityKey = contentWithEntity.getLastCreatedEntityKey()
+    }
+    this.onChange(
+      RichUtils.toggleLink(editorState, selection, entityKey),
+      this.focus,
+    )
+  }
+}
+
 class MyEditor extends Component {
   constructor(props) {
     super(props)
+
+    // console.log('LINK:', Link)
 
     this.state = { editorState: false, dirty: false }
     this.onChange = (editorState) => this.setState({ editorState, dirty: true })
@@ -57,8 +159,19 @@ class MyEditor extends Component {
   }
 
   componentDidMount() {
+    // exports.Link = _link2.default;
+    // exports.findLinkEntities = _link.findLinkEntities;
+
+    const defaultDecorators = new CompositeDecorator([
+      {
+        strategy: findLinkEntities,
+        component: Link,
+      },
+    ])
+
     const editorState = createEditorState(
       convertToRaw(mediumDraftImporter(this.props.initialContent)),
+      defaultDecorators,
     )
     this.setState({ editorState })
   }
@@ -70,7 +183,7 @@ class MyEditor extends Component {
       <>
         {this.props.edit && this.state.editorState ? (
           <>
-            <Editor
+            <MyMed
               editorKey={this.props.editorKey}
               editorState={this.state.editorState}
               onChange={this.onChange}
