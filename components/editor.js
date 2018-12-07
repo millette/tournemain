@@ -9,6 +9,7 @@ import {
 import mediumDraftExporter from "medium-draft/dist/medium-draft-exporter"
 import mediumDraftImporter from "medium-draft/dist/medium-draft-importer"
 import { convertToRaw } from "draft-js"
+import Router from "next/router"
 
 import "medium-draft/dist/medium-draft.css"
 
@@ -29,6 +30,20 @@ class MyEditor extends Component {
         return
       }
       this.props.saveHTML({ html, path: this.props.editorKey })
+    }
+
+    this.htmlClick = (ev) => {
+      if (
+        !ev.target.href ||
+        !ev.target.dataset ||
+        ev.target.dataset.type !== "page"
+      )
+        return
+      ev.preventDefault()
+      Router.push(
+        `/page?page=${ev.target.pathname.slice(1)}`,
+        ev.target.pathname,
+      )
     }
   }
 
@@ -84,6 +99,7 @@ class MyEditor extends Component {
         ) : (
           <div
             className="content"
+            onClick={this.htmlClick}
             dangerouslySetInnerHTML={{ __html: this.props.initialContent }}
           />
         )}
