@@ -17,8 +17,8 @@ class Page extends Component {
     this.state = { undo: false, edit: false, path: false }
 
     this.edit = () => {
-      // console.log('EDIT this.props.router', this.props.router)
-      const page = this.props.router.query.page
+      const page = this.props.router.query.page || ""
+      // console.log('EDIT this.props.router', page)
       Router.push(`/page?page=${page}&edit=true`, `/edit/${page}`, {
         shallow: true,
       })
@@ -37,7 +37,7 @@ class Page extends Component {
         .then((res) => res.json())
         .then((response) => {
           // console.log('SAVED this.props.router', this.props.router)
-          const page = this.props.router.query.page
+          const page = this.props.router.query.page || ""
           this.props.json.content = html
           if (!this.props.json.title) this.props.json.title = "Titre à venir"
           Router.push(`/page?page=${page}`, `/${page}`, { shallow: true })
@@ -53,13 +53,13 @@ class Page extends Component {
 
     this.cancelEdit = (ev) => {
       let { undo, path } = ev
-      // console.log('CANCEL this.props.router', ev)
-      if (path) {
+      // console.log('CANCEL this.props.router', path)
+      if (path !== undefined) {
         // console.log('WITH EV')
         this.setState({ edit: false })
       } else {
         // console.log('NO EV')
-        const page = this.props.router.query.page
+        const page = this.props.router.query.page || ""
         Router.push(`/page?page=${page}`, `/${page}`, { shallow: true })
       }
       /*
@@ -84,6 +84,8 @@ class Page extends Component {
     // console.log('prevProps:', prevProps)
     // console.log('this.props.router:', this.props.router)
     // verify props have changed to avoid an infinite loop
+    const page = this.props.router.query.page || ""
+    // console.log('DidUpdate this.props.router', page)
 
     if (
       prevProps.router.query.page === query.page &&
