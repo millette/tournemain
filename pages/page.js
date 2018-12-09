@@ -1,6 +1,7 @@
 // npm
 import { Component } from "react"
 import Error from "next/error"
+import Router, { withRouter } from "next/router"
 import fetch from "isomorphic-unfetch"
 
 import "medium-draft/dist/basic.css"
@@ -10,12 +11,20 @@ import "medium-draft/dist/medium-draft.css"
 import { MyEditor, Nav } from "../components"
 import { baseUrl } from "../utils"
 
-export default class Index extends Component {
+class Page extends Component {
   constructor(props) {
     super(props)
     this.state = { undo: false, edit: false, path: false }
 
-    this.edit = () => this.setState({ edit: true })
+    this.edit = () => {
+      // console.log('EDIT this.props.router', this.props.router)
+      const page = this.props.router.query.page
+      Router.push(`/page?page=${page}&edit=true`, `/edit/${page}`, {
+        shallow: true,
+      })
+    }
+
+    // this.edit = () => this.setState({ edit: true })
 
     this.saveHTML = ({ html, path }) => {
       fetch(`/api/page/${path}`, {
@@ -27,21 +36,39 @@ export default class Index extends Component {
       })
         .then((res) => res.json())
         .then((response) => {
+          // console.log('SAVED this.props.router', this.props.router)
+          const page = this.props.router.query.page
+          this.props.json.content = html
+          if (!this.props.json.title) this.props.json.title = "Titre à venir"
+          Router.push(`/page?page=${page}`, `/${page}`, { shallow: true })
+          /*
           this.props.json.content = html
           this.props.json.title = "Titre à venir"
           delete this.props.json.statusCode
           this.setState({ edit: false })
+          */
         })
         .catch(console.error)
     }
 
     this.cancelEdit = (ev) => {
       let { undo, path } = ev
+      // console.log('CANCEL this.props.router', ev)
+      if (path) {
+        // console.log('WITH EV')
+        this.setState({ edit: false })
+      } else {
+        // console.log('NO EV')
+        const page = this.props.router.query.page
+        Router.push(`/page?page=${page}`, `/${page}`, { shallow: true })
+      }
+      /*
       if (undo === "" || typeof undo !== "string") {
         undo = false
         path = false
       }
       this.setState({ undo, path, edit: false })
+      */
     }
   }
 
@@ -50,6 +77,27 @@ export default class Index extends Component {
     return fetch(baseUrl(o.req, `api/page/${path}`))
       .then((res) => res.json())
       .then((json) => ({ json, path }))
+  }
+
+  componentDidUpdate(prevProps) {
+    const { pathname, query } = this.props.router
+    // console.log('prevProps:', prevProps)
+    // console.log('this.props.router:', this.props.router)
+    // verify props have changed to avoid an infinite loop
+
+    if (
+      prevProps.router.query.page === query.page &&
+      prevProps.router.query.edit !== query.edit
+    ) {
+      // console.log('CHANGE', query.edit)
+      this.setState({ edit: query.edit })
+    }
+
+    /*
+    if (query.id !== prevProps.router.query.id) {
+      // fetch data based on the new query
+    }
+    */
   }
 
   render() {
@@ -133,3 +181,5 @@ export default class Index extends Component {
     )
   }
 }
+
+export default withRouter(Page)
