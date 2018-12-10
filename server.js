@@ -4,6 +4,7 @@
 const fastify = require("fastify")({ logging: true })
 const abstractCache = require("abstract-cache")
 const fastifyCaching = require("fastify-caching")
+const nodeFetch = require("node-fetch")
 
 // core
 const { writeFileSync } = require("fs")
@@ -81,18 +82,13 @@ fastify.get("/api/page/:page", async (req, reply) => {
     throw new Error("API: Niet")
   }
 
-  reply.header("Vary", "Accept-Encoding")
+  // reply.header("Vary", "Accept-Encoding")
   // .etag()
   return pages[req.params.page]
 })
 
+/*
 fastify.put("/api/page/:page", async (req, reply) => {
-  /*
-  if (!pages[req.params.page]) {
-    reply.code(404)
-    throw new Error("API#put: Niet")
-  }
-  */
   const page = req.params.page
   if (!pages[page]) pages[page] = { title: "Titre à venir" }
   pages[page].content = req.body.html
@@ -115,22 +111,28 @@ fastify.put("/api/page/:page", async (req, reply) => {
 
   return { ok: true, page }
 })
+*/
 
 fastify.get("/favicon.ico", async (req, reply) => {
   reply.code(404)
-  throw new Error("Niet")
+  throw new Error("Niet favicon")
 })
 
-// TODO: add server-side cache
-const addCoreRoutes = (reserverd) =>
-  reserverd.forEach((p) => fastify.next(`/${p}`))
+const addCoreRoutes = (reserved) =>
+  reserved.forEach((p) =>
+    fastify.next(`/${p}`, async (app, { req }, reply) =>
+      cacheSend(app, req, reply),
+    ),
+  )
 
 // from the database
 const unknownPage = (p) => !pages[p]
 
+const coreRoutes = ["other", "about", "contact"]
+
 fastify.register(require("fastify-react"), { dev }).after(() => {
   // hardcoded, could be read from /pages/*.js or nextjs' API (tbd)
-  addCoreRoutes(["other", "about", "contact"])
+  addCoreRoutes(coreRoutes)
   fastify.next(
     "/:page",
     async (app, { req, query, params: { page } }, reply) => {
@@ -142,5 +144,17 @@ fastify.register(require("fastify-react"), { dev }).after(() => {
 
 fastify
   .listen(3000, process.env.HOSTNAME)
-  .then((address) => console.log("Server listening on", address))
+  .then((address) =>
+    Promise.all([
+      ...[...Object.keys(pages), ...coreRoutes].map((p) =>
+        nodeFetch(`${address}/${p}`),
+      ),
+      address,
+    ]),
+  )
+  .then((stuff) => {
+    const address = stuff.pop()
+    console.log(`Pre-heated ${stuff.length} pages`)
+    console.log(`Server listening on ${address}`)
+  })
   .catch(console.error)
