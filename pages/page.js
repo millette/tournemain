@@ -1,18 +1,42 @@
 // npm
 import { Component } from "react"
 import Error from "next/error"
+// import Router from "next/router"
 import fetch from "isomorphic-unfetch"
 
-import "medium-draft/dist/basic.css"
-import "medium-draft/dist/medium-draft.css"
+// import "medium-draft/dist/basic.css"
+// import "medium-draft/dist/medium-draft.css"
 
 // self
-import { MyEditor, Nav } from "../components"
+// import { MyEditor, Nav } from "../components"
+import { Nav } from "../components"
 import { baseUrl } from "../utils"
 
-export default class Index extends Component {
+export default class Page extends Component {
   constructor(props) {
     super(props)
+
+    this.htmlClick = (ev) => {
+      if (
+        !ev.target.href ||
+        !ev.target.dataset ||
+        ev.target.dataset.type !== "page"
+      )
+        return
+
+      ev.preventDefault()
+      Router.push(
+        `/page?page=${ev.target.pathname.slice(1)}`,
+        ev.target.pathname,
+      )
+    }
+  }
+
+  /*
+  constructor(props) {
+    super(props)
+
+
     this.state = { undo: false, edit: false, path: false }
 
     this.edit = () => this.setState({ edit: true })
@@ -44,89 +68,33 @@ export default class Index extends Component {
       this.setState({ undo, path, edit: false })
     }
   }
+  */
 
   static async getInitialProps(o) {
-    const path = o.asPath.slice(1)
-    return fetch(baseUrl(o.req, `api/page/${path}`))
-      .then((res) => res.json())
-      .then((json) => ({ json, path }))
+    return fetch(baseUrl(o.req, `api/page/${o.asPath.slice(1)}`))
+      .then((res) => {
+        if (res.ok) return res.json()
+        const error = new Error(res.statusText)
+        error.statusCode = res.status
+        throw error
+      })
+      .catch((error) => ({ statusCode: error.statusCode || 503, error }))
   }
 
   render() {
-    const { json, path } = this.props
-
-    if (json.statusCode === 404)
-      return (
-        <>
-          <Nav />
-          <section className="section">
-            <div className="container">
-              <h1 className="title">
-                Titre à venir{" "}
-                {this.state.edit ? null : (
-                  <button className="button is-small" onClick={this.edit}>
-                    edit
-                  </button>
-                )}
-              </h1>
-              <MyEditor
-                saveHTML={this.saveHTML}
-                cancelEdit={this.cancelEdit}
-                edit={true}
-                initialContent={""}
-                key={path}
-                editorKey={path}
-              />
-              {this.state.undo ? (
-                <div className="box">
-                  <h2 className="title">
-                    {this.state.path} <small>Undoable</small>
-                  </h2>
-                  <div
-                    className="content"
-                    dangerouslySetInnerHTML={{ __html: this.state.undo }}
-                  />
-                </div>
-              ) : null}
-            </div>
-          </section>
-        </>
-      )
-
-    if (json.statusCode) return <Error statusCode={json.statusCode} />
-
+    const { title, content, statusCode } = this.props
+    if (statusCode) return <Error statusCode={statusCode} />
     return (
       <>
         <Nav />
         <section className="section">
           <div className="container">
-            <h1 className="title">
-              {json.title}{" "}
-              {this.state.edit ? null : (
-                <button className="button is-small" onClick={this.edit}>
-                  edit
-                </button>
-              )}
-            </h1>
-            <MyEditor
-              saveHTML={this.saveHTML}
-              cancelEdit={this.cancelEdit}
-              edit={this.state.edit}
-              initialContent={json.content}
-              key={path}
-              editorKey={path}
+            <h1 className="title">{title}</h1>
+            <div
+              className="content"
+              onClick={this.htmlClick}
+              dangerouslySetInnerHTML={{ __html: content }}
             />
-            {this.state.undo ? (
-              <div className="box">
-                <h2 className="title">
-                  {this.state.path} <small>Undoable</small>
-                </h2>
-                <div
-                  className="content"
-                  dangerouslySetInnerHTML={{ __html: this.state.undo }}
-                />
-              </div>
-            ) : null}
           </div>
         </section>
       </>
