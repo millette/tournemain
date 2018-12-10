@@ -46,6 +46,7 @@
     "isomorphic-unfetch": "^3.0.0",
     "medium-draft": "^0.5.9",
     "next-purgecss": "^3.0.0",
+    "node-fetch": "^2.3.0",
     "react": "^16.6.3",
     "react-dom": "^16.6.3"
   },
