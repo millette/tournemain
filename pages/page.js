@@ -1,7 +1,7 @@
 // npm
 import { Component } from "react"
 import Error from "next/error"
-// import Router from "next/router"
+import Router from "next/router"
 import fetch from "isomorphic-unfetch"
 
 // import "medium-draft/dist/basic.css"
