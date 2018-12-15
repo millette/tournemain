@@ -3,3 +3,4 @@ node_modules
 pages.json
 pages-ok.json
 p-revved-v1.json
+.nyc_output
