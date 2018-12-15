@@ -7,18 +7,20 @@ const fastifyCaching = require("fastify-caching")
 const nodeFetch = require("node-fetch")
 
 // core
-const { writeFileSync } = require("fs")
+// const { writeFileSync } = require("fs")
 
 const dev = process.env.NODE_ENV !== "production"
 
 // pretend we're a db
-// const pages = require("./pages.json")
+const pages = require("./pages.json")
+/*
 let pages
 try {
   pages = require("/tmp/pages.json")
 } catch (e) {
   pages = require("./pages.json")
 }
+*/
 
 /*
 let dirty = false
