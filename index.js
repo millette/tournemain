@@ -1,7 +1,6 @@
 "use strict"
 
 // npm
-// const fastify = require("fastify")({ logger: true, pluginTimeout: 60000 })
 const fastifyMod = require("fastify")
 const abstractCache = require("abstract-cache")
 const fastifyCaching = require("fastify-caching")
@@ -65,16 +64,8 @@ fastify.put("/api/page/:page", async (req, reply) => {
 })
 */
 
-/*
-fastify.get("/favicon.ico", async (req, reply) => {
-  reply.code(404)
-  throw new Error("Niet favicon")
-})
-*/
-
 const coreRoutes = ["other", "about", "contact"]
 
-// const srv = (pages, 3000, process.env.HOSTNAME)
 module.exports = (pages = {}, opts) => {
   const { port, hostname, logger } = opts
   const fastify = fastifyMod({ logger, pluginTimeout: 60000 })
