@@ -89,11 +89,6 @@ fastify.get("/api/page/:page", async (req, reply) => {
   return pages[req.params.page]
 })
 
-// FIXME: why must I override this route?
-fastify.get("/_next/webpack-hmr", async (req, reply) => {
-  reply.code(204)
-})
-
 /*
 fastify.put("/api/page/:page", async (req, reply) => {
   const page = req.params.page
@@ -138,12 +133,13 @@ const unknownPage = (p) => !pages[p]
 const coreRoutes = ["other", "about", "contact"]
 
 fastify.register(require("fastify-react"), { dev }).after((err, f, next) => {
+  if (err) return next(err)
   addCoreRoutes(coreRoutes)
   f.next("/:page", async (app, { req, query, params: { page } }, reply) => {
     if (unknownPage(page)) return app.render404(req, reply.res)
     return cacheSend(app, req, reply, { ...query, page }, "/page")
   })
-  next(err)
+  next()
 })
 
 fastify
@@ -158,7 +154,7 @@ fastify
   )
   .then((stuff) => {
     const address = stuff.pop()
-    console.log(`Pre-heated ${stuff.length} pages`)
-    console.log(`Server listening on ${address}`)
+    fastity.log.info(`Pre-heated ${stuff.length} pages`)
+    fastity.log.info(`Server listening on ${address}`)
   })
   .catch(console.error)
