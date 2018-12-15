@@ -1,5 +1,15 @@
 "use strict"
 
+// self
+const srv = require(".")
+// pretend we're a db
+const pages = require("./pages.json")
+
+srv(pages, { port: 3000, hostname: process.env.HOSTNAME, logger: true }).catch(
+  console.error,
+)
+
+/*
 // npm
 const fastify = require("fastify")({ logger: true, pluginTimeout: 60000 })
 const abstractCache = require("abstract-cache")
@@ -10,9 +20,10 @@ const nodeFetch = require("node-fetch")
 // const { writeFileSync } = require("fs")
 
 const dev = process.env.NODE_ENV !== "production"
+*/
 
 // pretend we're a db
-const pages = require("./pages.json")
+// const pages = require("./pages.json")
 /*
 let pages
 try {
@@ -32,6 +43,7 @@ setInterval(() => {
 }, 1 * 60 * 1000)
 */
 
+/*
 const TTL = dev ? 30 : 86400000 * 30
 const cacheOptions = { driver: { options: {} } }
 if (dev) cacheOptions.driver.options.maxItems = 10
@@ -90,6 +102,7 @@ fastify.get("/api/page/:page", async (req, reply) => {
   // .etag()
   return pages[req.params.page]
 })
+*/
 
 /*
 fastify.put("/api/page/:page", async (req, reply) => {
@@ -117,6 +130,7 @@ fastify.put("/api/page/:page", async (req, reply) => {
 })
 */
 
+/*
 fastify.get("/favicon.ico", async (req, reply) => {
   reply.code(404)
   throw new Error("Niet favicon")
@@ -158,5 +172,7 @@ fastify
     const address = stuff.pop()
     fastify.log.info(`Pre-heated ${stuff.length} pages`)
     fastify.log.info(`Server listening on ${address}`)
+    return address
   })
   .catch(console.error)
+*/
