@@ -1,7 +1,7 @@
 "use strict"
 
 // npm
-const fastify = require("fastify")({ logging: true })
+const fastify = require("fastify")({ logger: true, pluginTimeout: 60000 })
 const abstractCache = require("abstract-cache")
 const fastifyCaching = require("fastify-caching")
 const nodeFetch = require("node-fetch")
@@ -20,6 +20,7 @@ try {
   pages = require("./pages.json")
 }
 
+/*
 let dirty = false
 setInterval(() => {
   if (!dirty) return
@@ -27,6 +28,7 @@ setInterval(() => {
   writeFileSync("/tmp/pages.json", json)
   dirty = false
 }, 1 * 60 * 1000)
+*/
 
 const TTL = dev ? 30 : 86400000 * 30
 const cacheOptions = { driver: { options: {} } }
@@ -87,6 +89,11 @@ fastify.get("/api/page/:page", async (req, reply) => {
   return pages[req.params.page]
 })
 
+// FIXME: why must I override this route?
+fastify.get("/_next/webpack-hmr", async (req, reply) => {
+  reply.code(204)
+})
+
 /*
 fastify.put("/api/page/:page", async (req, reply) => {
   const page = req.params.page
@@ -130,16 +137,13 @@ const unknownPage = (p) => !pages[p]
 
 const coreRoutes = ["other", "about", "contact"]
 
-fastify.register(require("fastify-react"), { dev }).after(() => {
-  // hardcoded, could be read from /pages/*.js or nextjs' API (tbd)
+fastify.register(require("fastify-react"), { dev }).after((err, f, next) => {
   addCoreRoutes(coreRoutes)
-  fastify.next(
-    "/:page",
-    async (app, { req, query, params: { page } }, reply) => {
-      if (unknownPage(page)) return app.render404(req, reply.res)
-      return cacheSend(app, req, reply, { ...query, page }, "/page")
-    },
-  )
+  f.next("/:page", async (app, { req, query, params: { page } }, reply) => {
+    if (unknownPage(page)) return app.render404(req, reply.res)
+    return cacheSend(app, req, reply, { ...query, page }, "/page")
+  })
+  next(err)
 })
 
 fastify
