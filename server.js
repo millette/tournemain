@@ -156,7 +156,7 @@ fastify
   )
   .then((stuff) => {
     const address = stuff.pop()
-    fastity.log.info(`Pre-heated ${stuff.length} pages`)
-    fastity.log.info(`Server listening on ${address}`)
+    fastify.log.info(`Pre-heated ${stuff.length} pages`)
+    fastify.log.info(`Server listening on ${address}`)
   })
   .catch(console.error)
