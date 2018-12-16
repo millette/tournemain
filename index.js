@@ -66,7 +66,7 @@ fastify.put("/api/page/:page", async (req, reply) => {
 
 const coreRoutes = ["other", "about", "contact"]
 
-module.exports = (pages = {}, opts) => {
+module.exports = (pages = {}, opts = {}) => {
   const { port, hostname, logger } = opts
   const fastify = fastifyMod({ logger, pluginTimeout: 60000 })
 
@@ -156,5 +156,6 @@ module.exports = (pages = {}, opts) => {
       const address = stuff.pop()
       fastify.log.info(`Pre-heated ${stuff.length} pages`)
       fastify.log.info(`Server listening on ${address}`)
+      return address
     })
 }
