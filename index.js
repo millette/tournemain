@@ -136,7 +136,6 @@ module.exports = (pages = {}, opts = {}) => {
 
   fastify.get("/api/page/:page", async (req, reply) => {
     if (!pages[req.params.page]) return reply.callNotFound()
-
     // reply.header("Vary", "Accept-Encoding")
     // .etag()
     return pages[req.params.page]
@@ -145,12 +144,14 @@ module.exports = (pages = {}, opts = {}) => {
   return fastify
     .listen(port, hostname)
     .then((address) =>
-      Promise.all([
-        ...[...Object.keys(pages), ...coreRoutes].map((p) =>
-          nodeFetch(`${address}/${p}`),
-        ),
-        address,
-      ]),
+      dev
+        ? [address]
+        : Promise.all([
+            ...[...Object.keys(pages), ...coreRoutes].map((p) =>
+              nodeFetch(`${address}/${p}`),
+            ),
+            address,
+          ]),
     )
     .then((stuff) => {
       const address = stuff.pop()
