@@ -66,9 +66,13 @@ fastify.put("/api/page/:page", async (req, reply) => {
 
 const coreRoutes = ["other", "about", "contact"]
 
-module.exports = (pages = {}, opts = {}) => {
-  const { port, hostname, logger } = opts
-  const fastify = fastifyMod({ logger, pluginTimeout: 60000 })
+// module.exports = (pages = {}, opts = {}) => {
+//  const { port, hostname, logger } = opts
+//  const fastify = fastifyMod({ logger, pluginTimeout: 60000 })
+module.exports = ({ config = {}, docs }) => {
+  const { trustProxy, logger, port, hostname, ...cfg } = config
+  const fastify = fastifyMod({ trustProxy, logger, pluginTimeout: 60000 })
+  fastify.register(require("fastify-docs-db"), { config: cfg, docs })
 
   fastify.register(require("fastify-response-time"))
   fastify.register(fastifyCaching, {
@@ -122,28 +126,32 @@ module.exports = (pages = {}, opts = {}) => {
     )
 
   // from the database
-  const unknownPage = (p) => !pages[p]
+  // const unknownPage = (p) => !pages[p]
 
   fastify.register(require("fastify-react"), { dev }).after((err, f, next) => {
     if (err) return next(err)
     addCoreRoutes(coreRoutes)
     f.next("/:page", async (app, { req, query, params: { page } }, reply) => {
-      if (unknownPage(page)) return app.render404(req, reply.res)
+      // if (unknownPage(page)) return app.render404(req, reply.res)
       return cacheSend(app, req, reply, { ...query, page }, "/page")
     })
     next()
   })
 
+  /*
   fastify.get("/api/page/:page", async (req, reply) => {
     if (!pages[req.params.page]) return reply.callNotFound()
     // reply.header("Vary", "Accept-Encoding")
     // .etag()
     return pages[req.params.page]
   })
+  */
 
   return fastify
     .listen(port, hostname)
-    .then((address) =>
+    .then(
+      (address) => [address],
+      /*
       dev
         ? [address]
         : Promise.all([
@@ -152,6 +160,7 @@ module.exports = (pages = {}, opts = {}) => {
             ),
             address,
           ]),
+      */
     )
     .then((stuff) => {
       const address = stuff.pop()
