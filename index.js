@@ -72,7 +72,11 @@ const coreRoutes = ["other", "about", "contact"]
 module.exports = ({ config = {}, docs }) => {
   const { trustProxy, logger, port, hostname, ...cfg } = config
   const fastify = fastifyMod({ trustProxy, logger, pluginTimeout: 60000 })
-  fastify.register(require("fastify-docs-db"), { config: cfg, docs })
+  fastify.register(require("fastify-docs-db"), {
+    prefix: "/api",
+    config: cfg,
+    docs,
+  })
 
   fastify.register(require("fastify-response-time"))
   fastify.register(fastifyCaching, {
