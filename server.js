@@ -14,7 +14,7 @@ const srv = require(".")
 srv({
   config: {
     trustProxy: "127.0.0.1",
-    logger: true,
+    logger: process.env.NODE_NEV === "production" ? { level: "error" } : true,
     port: 3000,
     hostname: process.env.HOSTNAME,
   },
