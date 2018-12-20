@@ -72,11 +72,37 @@ const coreRoutes = ["other", "about", "contact"]
 module.exports = ({ config = {}, docs }) => {
   const { trustProxy, logger, port, hostname, ...cfg } = config
   const fastify = fastifyMod({ trustProxy, logger, pluginTimeout: 60000 })
+  fastify.get("/favicon.ico", async (req, reply) => {
+    reply.code(404)
+    throw new Error("No favicon")
+  })
+
   fastify.register(require("fastify-docs-db"), {
     prefix: "/api",
     config: cfg,
     docs,
   })
+  /*
+  .after((err, done) => {
+    console.log('ERR:', err)
+    fastify.inject({
+      method: 'GET',
+      url: '/api/pages'
+    }, (error, resp) => {
+      console.log('RESP:', resp)
+    })
+      done()
+  })
+  */
+  /*
+  .after((a, b, c) => {
+    // console.log('ZZZ:', z.db, Object.keys(z))
+    // console.log('A:', a)
+    console.log('B:', b.db.getDoc(''))
+    // console.log('C:', c)
+    c()
+   })
+  */
 
   fastify.register(require("fastify-response-time"))
   fastify.register(fastifyCaching, {
@@ -113,13 +139,30 @@ module.exports = ({ config = {}, docs }) => {
     }
 
     const html = await app.renderToHTML(req, reply.res, path || req.url, opts)
+    // FIXME: bit of a hack to handler 404s from the api
+
+    if (html.includes('"statusCode":404,')) {
+      reply.code(404)
+      app.render404(req, reply.res) // or req.req
+      reply.sent = true
+      return
+    }
+
     const { etag, date } = await setPromise(req.url, html)
+    // console.log('ETAG:', etag, date)
     reply
-      // .etag(etag)
+      .etag(etag)
       .header("x-ss-cache", "miss")
       .type("text/html")
     if (process.env.HOSTNAME) reply.header("x-backend", process.env.HOSTNAME)
+    // console.log('HTML:', html)
     return html
+    /*
+    try {
+    } catch (error) {
+      console.log('CATCH-ERROR:', error)
+    }
+    */
   }
 
   const addCoreRoutes = (reserved) =>
