@@ -6,18 +6,12 @@ const abstractCache = require("abstract-cache")
 const fastifyCaching = require("fastify-caching")
 const nodeFetch = require("node-fetch")
 
-// core
-// const { writeFileSync } = require("fs")
-
 const dev = process.env.NODE_ENV !== "production"
 
 const TTL = dev ? 30 : 86400000 * 30
 const cacheOptions = { driver: { options: {} } }
 if (dev) cacheOptions.driver.options.maxItems = 10
 const cache = abstractCache(cacheOptions)
-
-// pretend we're a db
-// const pages = require("./pages.json")
 
 /*
 let pages
@@ -26,9 +20,7 @@ try {
 } catch (e) {
   pages = require("./pages.json")
 }
-*/
 
-/*
 let dirty = false
 setInterval(() => {
   if (!dirty) return
@@ -36,9 +28,7 @@ setInterval(() => {
   writeFileSync("/tmp/pages.json", json)
   dirty = false
 }, 1 * 60 * 1000)
-*/
 
-/*
 fastify.put("/api/page/:page", async (req, reply) => {
   const page = req.params.page
   if (!pages[page]) pages[page] = { title: "Titre à venir" }
@@ -66,9 +56,6 @@ fastify.put("/api/page/:page", async (req, reply) => {
 
 const coreRoutes = ["other", "about", "contact"]
 
-// module.exports = (pages = {}, opts = {}) => {
-//  const { port, hostname, logger } = opts
-//  const fastify = fastifyMod({ logger, pluginTimeout: 60000 })
 module.exports = ({ config = {}, docs }) => {
   const { trustProxy, logger, port, hostname, ...cfg } = config
   const fastify = fastifyMod({ trustProxy, logger, pluginTimeout: 60000 })
@@ -82,27 +69,6 @@ module.exports = ({ config = {}, docs }) => {
     config: cfg,
     docs,
   })
-  /*
-  .after((err, done) => {
-    console.log('ERR:', err)
-    fastify.inject({
-      method: 'GET',
-      url: '/api/pages'
-    }, (error, resp) => {
-      console.log('RESP:', resp)
-    })
-      done()
-  })
-  */
-  /*
-  .after((a, b, c) => {
-    // console.log('ZZZ:', z.db, Object.keys(z))
-    // console.log('A:', a)
-    console.log('B:', b.db.getDoc(''))
-    // console.log('C:', c)
-    c()
-   })
-  */
 
   fastify.register(require("fastify-response-time"))
   fastify.register(fastifyCaching, {
@@ -139,8 +105,8 @@ module.exports = ({ config = {}, docs }) => {
     }
 
     const html = await app.renderToHTML(req, reply.res, path || req.url, opts)
-    // FIXME: bit of a hack to handler 404s from the api
 
+    // FIXME: bit of a hack to handler 404s from the api
     if (html.includes('"statusCode":404,')) {
       reply.code(404)
       app.render404(req, reply.res) // or req.req
@@ -149,20 +115,12 @@ module.exports = ({ config = {}, docs }) => {
     }
 
     const { etag, date } = await setPromise(req.url, html)
-    // console.log('ETAG:', etag, date)
     reply
       .etag(etag)
       .header("x-ss-cache", "miss")
       .type("text/html")
     if (process.env.HOSTNAME) reply.header("x-backend", process.env.HOSTNAME)
-    // console.log('HTML:', html)
     return html
-    /*
-    try {
-    } catch (error) {
-      console.log('CATCH-ERROR:', error)
-    }
-    */
   }
 
   const addCoreRoutes = (reserved) =>
@@ -185,19 +143,11 @@ module.exports = ({ config = {}, docs }) => {
     next()
   })
 
-  /*
-  fastify.get("/api/page/:page", async (req, reply) => {
-    if (!pages[req.params.page]) return reply.callNotFound()
-    // reply.header("Vary", "Accept-Encoding")
-    // .etag()
-    return pages[req.params.page]
-  })
-  */
-
   return fastify
     .listen(port, hostname)
     .then(
       (address) => [address],
+      // don't preheat
       /*
       dev
         ? [address]
