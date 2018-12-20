@@ -46,7 +46,7 @@
     "fast-json-stable-stringify": "^2.0.0",
     "fastify": "^2.0.0-rc.2",
     "fastify-caching": "^4.0.0",
-    "fastify-docs-db": "0.0.2",
+    "fastify-docs-db": "0.0.3",
     "fastify-react": "millette/fastify-react#fix-empty-response",
     "fastify-response-time": "millette/fastify-response-time#fastify-v2",
     "isomorphic-unfetch": "^3.0.0",
@@ -68,7 +68,7 @@
   },
   "now": {
     "files": [
-      "pages.json",
+      "out-pretty.json",
       "next.config.js",
       "components",
       "pages",
