@@ -72,6 +72,7 @@
       "next.config.js",
       "components",
       "pages",
+      "index.js",
       "server.js",
       "utils"
     ],
