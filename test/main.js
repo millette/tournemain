@@ -15,7 +15,7 @@ test("el test#1", withPage, async (t, page) => {
         {
           _id: "",
           title: "Tournemain",
-          content: '<p>bla bla <a href="/p2">Page 2</a></p>',
+          content: '<p>bla bla <a data-type="page" href="/p2">Page 2</a></p>',
           _rev: "0-dSf4VkAST4suKo6B0emBsg",
           _created: 1545177746441,
           _updated: 1545177746441,
@@ -26,7 +26,8 @@ test("el test#1", withPage, async (t, page) => {
         {
           _id: "p2",
           title: "Tournemain - Page 2",
-          content: '<h2>boop</h2><p>bla bla <a href="/">Home</a></p>',
+          content:
+            '<h2>boop</h2><p>bla bla <a data-type="page" href="/">Home</a></p>',
           _rev: "0-abc4VkAST4suKo6B0emBsg",
           _created: 1545177646441,
           _updated: 1545177646441,
