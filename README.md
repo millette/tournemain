@@ -1,6 +1,6 @@
 # Tournemain
 
-_Prenez le web à deux mains_
+> Prenez le web à deux mains.
 
 Au départ, `Tournemain` est une application web pour offrir un site, comme un blogue ou un wiki, qui met la vitesse en priorité. Vitesse du service, vitesse de prise en main, pourvu que ça accélère l'expérience.
 
@@ -94,3 +94,7 @@ npm install
 npm run build
 npm run start
 ```
+
+## License
+
+AGPL-v3 © 2018 [Robin Millette](http://robin.millette.info)
