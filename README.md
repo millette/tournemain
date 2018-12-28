@@ -1,5 +1,8 @@
 # Tournemain
 
+[![Build Status](https://travis-ci.org/millette/tournemain.svg?branch=master)](https://travis-ci.org/millette/tournemain)
+[![Coverage Status](https://coveralls.io/repos/github/millette/tournemain/badge.svg?branch=master)](https://coveralls.io/github/millette/tournemain?branch=master)
+
 > Prenez le web à deux mains.
 
 Au départ, `Tournemain` est une application web pour offrir un site, comme un blogue ou un wiki, qui met la vitesse en priorité. Vitesse du service, vitesse de prise en main, pourvu que ça accélère l'expérience.
