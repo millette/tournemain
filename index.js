@@ -4,7 +4,6 @@
 const fastifyMod = require("fastify")
 const abstractCache = require("abstract-cache")
 const fastifyCaching = require("fastify-caching")
-const nodeFetch = require("node-fetch")
 
 const dev = process.env.NODE_ENV !== "production"
 
@@ -80,8 +79,8 @@ module.exports = ({ config = {}, docs }) => {
   const getPromise = (key) =>
     new Promise((resolve, reject) =>
       fastify.cache.get(key, (err, cached) =>
-        err ? reject(err) : resolve(cached),
-      ),
+        err ? reject(err) : resolve(cached)
+      )
     )
 
   const setPromise = (key, html) =>
@@ -90,7 +89,7 @@ module.exports = ({ config = {}, docs }) => {
       const etag = `"${key.replace(/[^a-z0-9]/g, "")}${html.length}"`
       const obj = { html, date, etag }
       fastify.cache.set(key, obj, TTL, (err) =>
-        err ? reject(err) : resolve(obj),
+        err ? reject(err) : resolve(obj)
       )
     })
 
@@ -126,8 +125,8 @@ module.exports = ({ config = {}, docs }) => {
   const addCoreRoutes = (reserved) =>
     reserved.forEach((p) =>
       fastify.next(`/${p}`, async (app, { req }, reply) =>
-        cacheSend(app, req, reply),
-      ),
+        cacheSend(app, req, reply)
+      )
     )
 
   // from the database
@@ -146,7 +145,7 @@ module.exports = ({ config = {}, docs }) => {
   return fastify
     .listen(port, hostname)
     .then(
-      (address) => [address],
+      (address) => [address]
       // don't preheat
       /*
       dev
