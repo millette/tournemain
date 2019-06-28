@@ -2,7 +2,7 @@
 import test from "ava"
 
 // self
-import withPage from "./helpers/with-page"
+import withPage from "./helpers/_with-page"
 import srv from ".."
 
 // FIXME: we can only have one test
