@@ -2,7 +2,7 @@
 import { Component } from "react"
 import Error from "next/error"
 import Router from "next/router"
-import fetch from "isomorphic-unfetch"
+import "isomorphic-unfetch"
 
 // import "medium-draft/dist/basic.css"
 // import "medium-draft/dist/medium-draft.css"
@@ -27,7 +27,7 @@ export default class Page extends Component {
       ev.preventDefault()
       Router.push(
         `/page?page=${ev.target.pathname.slice(1)}`,
-        ev.target.pathname,
+        ev.target.pathname
       )
     }
   }
